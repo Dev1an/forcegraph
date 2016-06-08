@@ -1,0 +1,12 @@
+{
+  "name": "forcegraph",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "chance": "^1.0.3",
+    "d3": "^3.5.17",
+    "meteor-node-stubs": "~0.2.0"
+  }
+}

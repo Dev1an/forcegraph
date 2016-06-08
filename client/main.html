@@ -1,0 +1,18 @@
+<head>
+	<title>simple</title>
+</head>
+
+<body>
+<h1>Welcome to Meteor!</h1>
+
+{{> graph}}
+</body>
+
+<template name="graph">
+	<svg>
+
+	</svg>
+	<p>Selection: {{#if selectedModule}}{{selectedModule.name}}{{else}}nothing{{/if}}</p>
+	<button class="js-add">add node</button>
+	<button class="js-remove">remove node</button>
+</template>
