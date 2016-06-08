@@ -1,2 +1,2 @@
 import { Meteor } from 'meteor/meteor';
-import '/imports/Modules'
+import '/imports/Collections'

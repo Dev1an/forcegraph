@@ -1,6 +1,6 @@
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Template } from 'meteor/templating';
-import { modules } from '/imports/Modules';
+import { modules, events } from '/imports/Collections';
 import d3 from 'd3';
 import Chance from 'chance';
 const chance = new Chance();
@@ -95,22 +95,7 @@ Template.graph.onRendered(function() {
 					.attr('r', 5)
 			})
 			.on('click', function(data) {
-				for (let node of nodes) {
-					if (node != data) {
-						svg
-							.append('circle')
-							.classed('message', true)
-							.attr('cx', data.x)
-							.attr('cy', data.y)
-							.attr('opacity', 1)
-							.transition()
-							.duration(1000)
-							.attr('cx', node.x)
-							.attr('cy', node.y)
-							.attr('opacity', 0)
-							.remove()
-					}
-				}
+				events.insert({senderId: data._id, date: new Date()});
 			})
 			.transition()
 			.ease('elastic')
@@ -132,9 +117,9 @@ Template.graph.onRendered(function() {
 		}
 	);
 
-	observer = allModules.observe({
+	modulesObserver = allModules.observe({
 		added(module) {
-			nodes.push(module)
+			nodes.push(module);
 			updateNodes();
 		},
 		removed(module) {
@@ -142,6 +127,30 @@ Template.graph.onRendered(function() {
 			updateNodes();
 		}
 	});
+
+	let newEvents = false;
+	eventObserver = events.find({date: {$gte: new Date()}}).observe({
+		added(event) {
+			let source = nodes.find(node => node._id == event.senderId);
+			for (let node of nodes) {
+				if (node != source) {
+					svg
+						.append('circle')
+						.classed('message', true)
+						.attr('cx', source.x)
+						.attr('cy', source.y)
+						.attr('opacity', 1)
+						.transition()
+						.duration(1000)
+						.attr('cx', node.x)
+						.attr('cy', node.y)
+						.attr('opacity', 0)
+						.remove()
+				}
+			}
+		}
+	});
+	newEvents = true;
 
 });
 
