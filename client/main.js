@@ -94,6 +94,24 @@ Template.graph.onRendered(function() {
 					.transition()
 					.attr('r', 5)
 			})
+			.on('click', function(data) {
+				for (let node of nodes) {
+					if (node != data) {
+						svg
+							.append('circle')
+							.classed('message', true)
+							.attr('cx', data.x)
+							.attr('cy', data.y)
+							.attr('opacity', 1)
+							.transition()
+							.duration(1000)
+							.attr('cx', node.x)
+							.attr('cy', node.y)
+							.attr('opacity', 0)
+							.remove()
+					}
+				}
+			})
 			.transition()
 			.ease('elastic')
 			.duration(1000)
