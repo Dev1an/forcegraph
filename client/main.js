@@ -129,7 +129,7 @@ Template.graph.onRendered(function() {
 	});
 
 	let newEvents = false;
-	eventObserver = events.find({date: {$gte: new Date()}}).observe({
+	eventObserver = events.find().observe({
 		added(event) {
 			let source = nodes.find(node => node._id == event.senderId);
 			for (let node of nodes) {
