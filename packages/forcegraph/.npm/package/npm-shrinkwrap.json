@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "d3": {
+      "version": "3.5.17",
+      "resolved": "https://registry.npmjs.org/d3/-/d3-3.5.17.tgz",
+      "from": "d3@3.5.17"
+    }
+  }
+}

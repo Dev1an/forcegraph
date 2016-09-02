@@ -12,8 +12,8 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.3.2.4');
-  api.use('ecmascript');
-  api.mainModule('forcegraph.js');
+  api.use(['ecmascript', 'tracker', 'templating']);
+  api.mainModule('forcegraph.js', 'client');
 });
 
 Package.onTest(function(api) {
@@ -21,4 +21,8 @@ Package.onTest(function(api) {
   api.use('tinytest');
   api.use('dev1an:forcegraph');
   api.mainModule('forcegraph-tests.js');
+});
+
+Npm.depends({
+  d3: "3.5.17"
 });
