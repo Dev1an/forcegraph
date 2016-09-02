@@ -7,8 +7,43 @@ const chance = new Chance();
 
 import './main.html';
 
+let allModules = modules.find(
+	{},
+	{
+		fields: {_id: 1},
+		transform(module) {
+			module.x = randomPosition();
+			module.y = randomPosition();
+			return module
+		}
+	}
+);
+
+let allEvents = events.find({date: {$gte: new Date()}});
+
 Template.graph.onCreated(function() {
 	this.selection = new ReactiveVar(null);
+	this.nodes = [];
+
+	let template = this;
+
+	let modulesObserver = allModules.observe({
+		added(module) {
+			template.nodes.push(module);
+			template.updateNodes();
+		},
+		removed(module) {
+			template.nodes.splice(_.indexOf(template.nodes, node => node._id == module._id));
+			template.updateNodes();
+		}
+	});
+
+	let eventObserver = allEvents.observe({
+		added(event) {
+			template.drawEventCircle(event)
+		}
+	});
+
 });
 
 Template.graph.onRendered(function() {
@@ -16,7 +51,7 @@ Template.graph.onRendered(function() {
 		.attr('width', 500)
 		.attr('height', 500);
 
-	const nodes = [];
+	const nodes = this.nodes;
 	const links = [];
 
 	const force = d3.layout.force()
@@ -47,7 +82,7 @@ Template.graph.onRendered(function() {
 	force.start();
 
 	const selection = this.selection;
-	const updateNodes = this.updateNodes = () => {
+	this.updateNodes = () => {
 		links.length = 0;
 
 		// for source in 1 ..< nodeCount (in reverse order)
@@ -105,33 +140,11 @@ Template.graph.onRendered(function() {
 		force.start();
 	};
 
-	allModules = modules.find(
-		{},
-		{
-			fields: {_id: 1},
-			transform(module) {
-				module.x = randomPosition();
-				module.y = randomPosition();
-				return module
-			}
-		}
-	);
+	let template = this;
 
-	modulesObserver = allModules.observe({
-		added(module) {
-			nodes.push(module);
-			updateNodes();
-		},
-		removed(module) {
-			nodes.splice(_.indexOf(nodes, node => node._id == module._id));
-			updateNodes();
-		}
-	});
-
-	let newEvents = false;
-	eventObserver = events.find().observe({
-		added(event) {
-			let source = nodes.find(node => node._id == event.senderId);
+	this.drawEventCircle = function(event) {
+		let source = template.nodes.find(node => node._id == event.senderId);
+		if (typeof source != 'undefined') {
 			for (let node of nodes) {
 				if (node != source) {
 					svg
@@ -149,9 +162,7 @@ Template.graph.onRendered(function() {
 				}
 			}
 		}
-	});
-	newEvents = true;
-
+	};
 });
 
 Template.graph.helpers({
