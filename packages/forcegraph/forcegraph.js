@@ -140,6 +140,8 @@ Template.ForceGraph.onRendered(function() {
 		force.start();
 	};
 
+	this.updateNodes();
+
 	this.drawEventCircle = function(event) {
 		let source = template.nodes.find(node => node._id == event.senderId);
 		if (typeof source != 'undefined') {
