@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'dev1an:forcegraph',
+  name: 'devian:forcegraph',
   version: '0.0.2',
   // Brief, one-line summary of the package.
   summary: 'A forcegraph that visualizes nodes and messages between these nodes',
