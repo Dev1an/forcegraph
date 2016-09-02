@@ -1,6 +1,6 @@
 Package.describe({
   name: 'devian:forcegraph',
-  version: '0.0.2',
+  version: '0.0.1',
   // Brief, one-line summary of the package.
   summary: 'A forcegraph that visualizes nodes and messages between these nodes',
   // URL to the Git repository containing the source code for this package.
@@ -19,7 +19,7 @@ Package.onUse(function(api) {
 Package.onTest(function(api) {
   api.use('ecmascript');
   api.use('tinytest');
-  api.use('dev1an:forcegraph');
+  api.use('devian:forcegraph');
   api.mainModule('forcegraph-tests.js');
 });
 
