@@ -35,11 +35,17 @@ Template.graph.helpers({
 	allEvents,
 	setSelection() {
 		let template = Template.instance();
-		return module => template.selection.set(module._id)
+		return (module, circle) => {
+			template.selection.set(module._id);
+			circle.transition().attr('r', 12)
+		}
 	},
 	clearSelection() {
 		let template = Template.instance();
-		return () => template.selection.set(null)
+		return (module, circle) => {
+			template.selection.set(null);
+			circle.transition().attr('r', 5)
+		}
 	},
 	sendEvent() {
 		return module => events.insert({senderId: module._id, date: new Date()});

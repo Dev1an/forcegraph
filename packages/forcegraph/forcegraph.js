@@ -16,6 +16,7 @@ Template.ForceGraph.onRendered(function() {
 
 	const svg = d3.select(this.find('svg'))
 		.attr('viewBox', '0 0 500 500');
+	const messageGroup = svg.append('g');
 
 	const force = d3.layout.force()
 		.nodes(nodes)
@@ -131,7 +132,7 @@ Template.ForceGraph.onRendered(function() {
 		if (typeof source != 'undefined') {
 			for (let node of nodes) {
 				if (node != source) {
-					svg
+					messageGroup
 						.append('circle')
 						.classed('message', true)
 						.attr('cx', source.x)
@@ -148,21 +149,25 @@ Template.ForceGraph.onRendered(function() {
 		}
 	};
 
-	this.nodesObserver = this.data.nodeCursor.observe({
-		added(module) {
-			nodes.push(module);
-			addedNodes();
-		},
-		removed(module) {
-			nodes.splice(_.indexOf(nodes, node => node._id == module._id));
-			removedNodes();
-		}
+	this.autorun(() => {
+		nodes.length = 0
+		this.nodesObserver = Template.currentData().nodeCursor.observe({
+			added(module) {
+				nodes.push(module);
+				addedNodes();
+			},
+			removed(module) {
+				nodes.splice(_.indexOf(nodes, node => node._id == module._id));
+				removedNodes();
+			}
+		});
 	});
 
-	this.messageObserver = this.data.messageCursor.observe({
-		added: drawEventCircle
+	this.autorun(() => {
+		this.messageObserver = Template.currentData().messageCursor.observe({
+			added: drawEventCircle
+		});
 	});
-
 });
 
 Template.ForceGraph.onDestroyed(function() {
