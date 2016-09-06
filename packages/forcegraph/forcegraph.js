@@ -81,16 +81,10 @@ Template.ForceGraph.onRendered(function() {
 			.call(force.drag)
 			.attr('r', 0)
 			.on('mouseover', function(data) {
-				eventHandlers.mouseOverNode(data);
-				d3.select(this)
-					.transition()
-					.attr('r', 12)
+				eventHandlers.mouseOverNode(data, d3.select(this));
 			})
 			.on('mouseout', function(data) {
-				eventHandlers.mouseOutNode(data);
-				d3.select(this)
-					.transition()
-					.attr('r', 5)
+				eventHandlers.mouseOutNode(data, d3.select(this));
 			})
 			.on('click', function(data) {
 				eventHandlers.clickNode(data);
