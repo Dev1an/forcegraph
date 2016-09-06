@@ -40,7 +40,7 @@ Template.ForceGraph.onRendered(function() {
 	force.start();
 
 	const selection = this.selection;
-	const updateNodes = () => {
+	const addedNodes = () => {
 		links.length = 0;
 
 		// for source in 1 ..< nodeCount (in reverse order)
@@ -98,6 +98,35 @@ Template.ForceGraph.onRendered(function() {
 		force.start();
 	};
 
+	const removedNodes = () => {
+		links.length = 0;
+
+		// for source in 1 ..< nodeCount (in reverse order)
+		for (let source = nodes.length-1; source > 0; source--) {
+			// for target 0..< source (in reverse order)
+			for (let target = source-1; target>=0; target--) {
+				links.push({source, target})
+			}
+		}
+
+		link = link.data(links);
+		node = node.data(nodes);
+
+		link
+			.exit()
+			.remove();
+
+		node
+			.exit()
+			.transition()
+			.attr('r', 8)
+			.transition()
+			.attr('r', 0)
+			.remove();
+
+		force.start();
+	};
+
 	const drawEventCircle = function(event) {
 		let source = nodes.find(node => node._id == event.senderId);
 		if (typeof source != 'undefined') {
@@ -123,11 +152,11 @@ Template.ForceGraph.onRendered(function() {
 	const nodesObserver = this.data.nodeCursor.observe({
 		added(module) {
 			nodes.push(module);
-			updateNodes();
+			addedNodes();
 		},
 		removed(module) {
 			nodes.splice(_.indexOf(nodes, node => node._id == module._id));
-			template.updateNodes();
+			removedNodes();
 		}
 	});
 
