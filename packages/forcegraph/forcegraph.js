@@ -2,58 +2,15 @@ import './forcegraph.html'
 import d3 from 'd3';
 import {Tracker} from 'meteor/tracker'
 
-Template.ForceGraph.onCreated(function() {
-	this.nodes = [];
-
-	let template = this;
-	this.updateNodes = function(){};
-
-	let nodesObserver = {stop() {}}, messageObserver = {stop() {}};
-	template.drawEventCircle = () => {};
-
-	this.autorun(function() {
-		const cursor = Template.currentData().nodeCursor;
-		Tracker.nonreactive(() => {coupleNodeCursor(cursor)})
-	});
-
-	this.autorun(function() {
-		const cursor = Template.currentData().messageCursor;
-		Tracker.nonreactive(() => {coupleMessageCursor(cursor)})
-	});
-
-	function coupleNodeCursor(cursor) {
-		nodesObserver.stop();
-		template.nodes = [];
-		nodesObserver = cursor.observe({
-			added(module) {
-				template.nodes.push(module);
-				template.updateNodes();
-			},
-			removed(module) {
-				template.nodes.splice(_.indexOf(template.nodes, node => node._id == module._id));
-				template.updateNodes();
-			}
-		});
-	}
-
-	function coupleMessageCursor(cursor) {
-		messageObserver.stop();
-		messageObserver = cursor.observe({
-			added(event) {
-				template.drawEventCircle(event)
-			}
-		});
-	}
-});
-
 Template.ForceGraph.onRendered(function() {
 	const template = this;
+	const nodes = [];
+	const links = [];
+
 	const svg = d3.select(this.find('svg'))
 		.attr('width', 500)
 		.attr('height', 500);
 
-	const nodes = this.nodes;
-	const links = [];
 
 	const force = d3.layout.force()
 		.nodes(nodes)
@@ -83,7 +40,7 @@ Template.ForceGraph.onRendered(function() {
 	force.start();
 
 	const selection = this.selection;
-	this.updateNodes = () => {
+	const updateNodes = () => {
 		links.length = 0;
 
 		// for source in 1 ..< nodeCount (in reverse order)
@@ -141,14 +98,11 @@ Template.ForceGraph.onRendered(function() {
 		force.start();
 	};
 
-	this.updateNodes();
-
-	this.drawEventCircle = function(event) {
-		let source = template.nodes.find(node => node._id == event.senderId);
+	const drawEventCircle = function(event) {
+		let source = nodes.find(node => node._id == event.senderId);
 		if (typeof source != 'undefined') {
 			for (let node of nodes) {
 				if (node != source) {
-					console.log([source.x, source.y]);
 					svg
 						.append('circle')
 						.classed('message', true)
@@ -165,4 +119,20 @@ Template.ForceGraph.onRendered(function() {
 			}
 		}
 	};
+
+	const nodesObserver = this.data.nodeCursor.observe({
+		added(module) {
+			nodes.push(module);
+			updateNodes();
+		},
+		removed(module) {
+			nodes.splice(_.indexOf(nodes, node => node._id == module._id));
+			template.updateNodes();
+		}
+	});
+
+	const messageObserver = this.data.messageCursor.observe({
+		added: drawEventCircle
+	});
+
 });
