@@ -7,6 +7,13 @@ Template.ForceGraph.onRendered(function() {
 	const nodes = [];
 	const links = [];
 
+	const nothing = () => {};
+	const eventHandlers = {
+		mouseOverNode: this.data.mouseOverNode || nothing,
+		mouseOutNode : this.data.mouseOutNode  || nothing,
+		clickNode    : this.data.clickNode     || nothing
+	};
+
 	const svg = d3.select(this.find('svg'))
 		.attr('viewBox', '0 0 500 500');
 
@@ -74,19 +81,19 @@ Template.ForceGraph.onRendered(function() {
 			.call(force.drag)
 			.attr('r', 0)
 			.on('mouseover', function(data) {
-				template.data.mouseOverNode(data);
+				eventHandlers.mouseOverNode(data);
 				d3.select(this)
 					.transition()
-					.attr('r', 8)
+					.attr('r', 12)
 			})
 			.on('mouseout', function(data) {
-				template.data.mouseOutNode(data);
+				eventHandlers.mouseOutNode(data);
 				d3.select(this)
 					.transition()
 					.attr('r', 5)
 			})
 			.on('click', function(data) {
-				template.data.clickNode(data);
+				eventHandlers.clickNode(data);
 			})
 			.transition()
 			.ease('elastic')
