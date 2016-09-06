@@ -1,6 +1,6 @@
 import './forcegraph.html'
 import d3 from 'd3';
-import {Tracker} from 'meteor/tracker'
+import {Template} from 'meteor/templating'
 
 Template.ForceGraph.onRendered(function() {
 	const template = this;
@@ -147,7 +147,7 @@ Template.ForceGraph.onRendered(function() {
 		}
 	};
 
-	const nodesObserver = this.data.nodeCursor.observe({
+	this.nodesObserver = this.data.nodeCursor.observe({
 		added(module) {
 			nodes.push(module);
 			addedNodes();
@@ -158,8 +158,13 @@ Template.ForceGraph.onRendered(function() {
 		}
 	});
 
-	const messageObserver = this.data.messageCursor.observe({
+	this.messageObserver = this.data.messageCursor.observe({
 		added: drawEventCircle
 	});
 
+});
+
+Template.ForceGraph.onDestroyed(function() {
+	this.nodesObserver.stop();
+	this.messageObserver.stop();
 });
