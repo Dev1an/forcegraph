@@ -1,6 +1,6 @@
 Package.describe({
   name: 'devian:forcegraph',
-  version: '0.0.1',
+  version: '0.0.2',
   // Brief, one-line summary of the package.
   summary: 'A forcegraph that visualizes nodes and messages between these nodes',
   // URL to the Git repository containing the source code for this package.
