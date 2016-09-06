@@ -9,7 +9,9 @@
 </body>
 
 <template name="graph">
-	{{> ForceGraph nodeCursor=allModules messageCursor=allEvents mouseOverNode=setSelection mouseOutNode=clearSelection clickNode=sendEvent}}
+	{{#ForceGraph nodeCursor=allModules messageCursor=allEvents mouseOverNode=setSelection mouseOutNode=clearSelection clickNode=sendEvent}}
+		<svg style="max-height: 80vh"></svg>
+	{{/ForceGraph}}
 	<p>Selection: {{#if selectedModule}}{{selectedModule.name}}{{else}}nothing{{/if}}</p>
 	<button class="js-add">add node</button>
 	<button class="js-remove">remove node</button>
