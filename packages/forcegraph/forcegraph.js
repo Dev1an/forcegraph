@@ -9,6 +9,7 @@ Template.ForceGraph.onCreated(function() {
 	this.updateNodes = function(){};
 
 	let nodesObserver = {stop() {}}, messageObserver = {stop() {}};
+	template.drawEventCircle = () => {};
 
 	this.autorun(function() {
 		const cursor = Template.currentData().nodeCursor;
@@ -147,6 +148,7 @@ Template.ForceGraph.onRendered(function() {
 		if (typeof source != 'undefined') {
 			for (let node of nodes) {
 				if (node != source) {
+					console.log([source.x, source.y]);
 					svg
 						.append('circle')
 						.classed('message', true)
